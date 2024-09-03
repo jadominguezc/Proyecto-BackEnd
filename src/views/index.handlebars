@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productos</title>
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+
+        header {
+            padding: 20px;
+            background-color: #333;
+            text-align: center;
+            border-bottom: 2px solid #444;
+        }
+
+        h1 {
+            margin: 20px 0;
+            font-size: 2rem;
+            text-align: center;
+            color: #FFA500;
+        }
+
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+
+        }
+
+        .product {
+            border: 1px solid #444;
+            background-color: #333;
+            border-radius: 10px;
+            margin: 10px;
+            padding: 15px;
+            width: 30%;
+            box-sizing: border-box;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .product img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .product h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #ffa500;
+        }
+
+        .product p {
+            margin: 5px 0;
+            text-align: center;
+        }
+
+        .product product-link {
+            align-items: center;
+        }
+
+        .product form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .product form input[type="number"] {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #222;
+            color: white;
+        }
+
+        .product form button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .product form button:hover {
+            background-color: #ff6347;
+        }
+
+        .product button {
+            background-color: #bd3605;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Productos</h1>
+
+    <form method="GET" action="/products" style="align-items: center">
+        <label for="limit">Productos por página:</label>
+        <select id="limit" name="limit">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+        <label for="sort">Ordenar por precio:</label>
+        <select id="sort" name="sort">
+            <option value="">Sin orden</option>
+            <option value="asc">De menor a mayor</option>
+            <option value="desc">De mayor a menor</option>
+        </select>
+
+        <label for="category">Categoría:</label>
+        <select id="category" name="category">
+            <option value="">Todas las categorías</option>
+            <option value="hot-rolls">Hot Rolls</option>
+            <option value="california-rolls">California Rolls</option>
+            <option value="hand-rolls">Hand Rolls</option>
+        </select>
+
+        <label for="query">Buscar:</label>
+        <input type="text" id="query" name="query" value="{{searchText}}" placeholder="Buscar productos...">
+
+        <button type="submit">Aplicar</button>
+    </form>
+<br><br>
+    {{#each products}}
+    <div class="product">
+        <h2>{{this.title}}</h2>
+        <p>Categoría: {{this.category}}</p>
+        <p>Descripción: {{this.description}}</p>
+        <p>Precio: ${{this.price}}</p>
+        <img src="/{{this.image}}" alt="{{this.title}}" class="product-image" />
+        <form action="/api/carts/{{cartId}}/products/{{this._id}}" method="POST">
+            <input type="number" name="quantity" min="1" value="1" />
+            <button type="submit">Agregar al carrito</button>
+        </form>
+        <br>
+        <a href="/products/{{this._id}}" >
+            <button type="submit">Ver detalle</button>
+        </a>
+    </div>
+    {{/each}}
+
+    <!-- Paginación -->
+    <div>
+        {{#if hasPrevPage}}
+        <a href="{{prevLink}}">Prev</a>
+        {{/if}}
+        <span>Página {{page}} de {{totalPages}}</span>
+        {{#if hasNextPage}}
+        <a href="{{nextLink}}">Next</a>
+        {{/if}}
+    </div>
+</body>
+
+</html>

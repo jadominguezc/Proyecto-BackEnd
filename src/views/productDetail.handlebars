@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{product.title}} - Detalles</title>
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 20px;
+            background-color: #333;
+            text-align: center;
+            border-bottom: 2px solid #444;
+        }
+
+        .product-detail {
+            border: 1px solid #444;
+            background-color: #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            padding: 20px;
+            width: 50%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .product-detail img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .product-detail h1 {
+            font-size: 30;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #ffa500;
+        }
+
+        .product-detail p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product-detail button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        .product-detail button:hover {
+            background-color: #ff6347;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="product-detail">
+        <h1>{{product.title}}</h1>
+        <img src="/{{product.image}}" alt="{{product.title}}">
+        <p><strong>Precio:</strong> ${{product.price}}</p>
+        <p><strong>Categoría:</strong> {{product.category}}</p>
+        <p><strong>Descripción:</strong> {{product.description}}</p>
+        <p><strong>Stock:</strong> {{product.stock}}</p>
+        <br>
+        <form action="/api/carts/{{cartId}}/products/{{product._id}}" method="POST">
+            <label for="quantity">Cantidad:</label>
+            <input type="number" id="quantity" name="quantity" min="1" value="1"><br>
+            <button type="submit" class="add-to-cart">Agregar al carrito</button>
+        </form>
+    </div>
+</body>
+
+</html>

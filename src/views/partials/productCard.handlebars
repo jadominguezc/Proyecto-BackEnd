@@ -1,0 +1,11 @@
+<div class="product">
+    <h2>{{title}}</h2>
+    <p>Categoría: {{category}}</p>
+    <p>Descripción: {{description}}</p>
+    <p>Precio: ${{price}}</p>
+    <img src="/{{image}}" alt="{{title}}" style="max-width: 100px; max-height: 100px;" />
+    <form action="/api/carts/{{cartId}}/products/{{_id}}" method="POST" style="display:inline">
+        <input type="number" name="quantity" min="1" value="1" />
+        <button type="submit">Agregar al carrito</button>
+    </form>
+</div>

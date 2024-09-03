@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito</title>
+    <style>
+        body { background-color: black; color: white; }
+        h1 { font-weight: bold; }
+        .header { margin: 20px 0; font-size: 1.5em; text-align: center; }
+        .product { border: 1px solid white; margin: 10px; padding: 10px; text-align: center; }
+        .empty-cart { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Carrito</h1>
+
+    {{#if products.length}}
+    <div class="header">
+        <span>Cantidad</span> |
+        <span>Descripción</span> |
+        <span>Precio Unitario</span> |
+        <span>Precio Total</span>
+    </div>
+    
+    {{#each products}}
+    <div class="product">
+        <h2>{{this.product.title}}</h2>
+        <p>Categoría: {{this.product.category}}</p>
+        <p>Descripción: {{this.product.description}}</p>
+        <p>Precio: ${{this.product.price}}</p>
+        <p>Cantidad: {{this.quantity}}</p>
+        <p>Total: ${{multiply this.quantity this.product.price}}</p>
+        <form action="/api/carts/{{../cartId}}/products/{{this.product._id}}" method="PUT">
+            <input type="number" name="quantity" min="1" value="{{this.quantity}}" />
+            <button type="submit">Actualizar cantidad</button>
+        </form>
+        <form action="/api/carts/{{../cartId}}/products/{{this.product._id}}" method="DELETE">
+            <button type="submit">Eliminar</button>
+        </form>
+    </div>
+    {{/each}}
+
+    <form action="/api/carts/{{cartId}}" method="DELETE">
+        <button type="submit">Vaciar carrito</button>
+    </form>
+
+    {{else}}
+    <div class="empty-cart">
+        <p>Aún no has añadido productos al carrito</p>
+    </div>
+    {{/if}}
+</body>
+</html>
