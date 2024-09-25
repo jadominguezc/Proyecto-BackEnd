@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 20px;
+            background-color: #333;
+            text-align: center;
+            border-bottom: 2px solid #444;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #FFA500;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .register-container {
+            max-width: 400px;
+            margin: 40px auto;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #FFA500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #FF4500;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #FF6347;
+        }
+
+        .register-container a {
+            color: #FFA500;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .register-container a:hover {
+            color: #FF6347;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Registrarse</h1>
+    </header>
+
+    <div class="register-container">
+        <form action="/api/sessions/register" method="POST">
+            <label for="first_name">Nombre:</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Ingresa tu nombre" required>
+
+            <label for="last_name">Apellido:</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Ingresa tu apellido" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Ingresa tu email" required>
+
+            <label for="age">Edad:</label>
+            <input type="number" id="age" name="age" placeholder="Ingresa tu edad" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <a href="/api/sessions/login">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+</body>
+</html>

@@ -4,9 +4,11 @@ const mongoose = require("mongoose");
 const express = require("express");
 const { engine } = require("express-handlebars");
 const path = require("path");
+const cookieParser = require('cookie-parser');
 const productsRouter = require("./routes/api/products");
 const viewsRouter = require("./routes/views");
 const cartsRouter = require("./routes/api/carts");
+const sessionsRouter = require('./routes/sessions');
 const http = require("http");
 const socketIo = require("socket.io");
 const Product = require("./models/Product");
@@ -28,12 +30,15 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Conectado a MongoDB Atlas"))
-  .catch((err) => console.error("Error al conectar a MongoDB Atlas:", err));
+  .then(() => console.log("Conectado a MongoDB"))
+  .catch((err) => console.error("Error al conectar a MongoDB", err));
 
+  //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); 
 
+//Archivos estaticos y vistas
 app.use("./uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(express.static(path.join(__dirname, "../public")));
@@ -53,8 +58,10 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(methodOverride("_method"));
 
+//rutas
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use('/api/sessions', sessionsRouter);
 app.use("/", viewsRouter);
 
 io.on("connection", async (socket) => {

@@ -115,4 +115,18 @@ router.get("/admin/products", async (req, res) => {
     }
 });
 
+//Vista para el login
+router.get('/api/sessions/login', (req, res) => {
+    res.render('login'); 
+});
+
+// Ruta para mostrar la vista de registro
+router.get('/register', (req, res) => {
+    res.render('register');  
+});
+
+router.get('/current', (req, res) => {
+    res.render('current');  
+});
+
 module.exports = router;

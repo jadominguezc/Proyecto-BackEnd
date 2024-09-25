@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <style>
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 20px;
+            background-color: #333;
+            text-align: center;
+            border-bottom: 2px solid #444;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #FFA500;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .perfil-container {
+            max-width: 400px;
+            margin: 40px auto;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Perfil de Usuario</h1>
+    </header>
+
+    <div class="perfil-container">
+        <p><strong>ID de Usuario:</strong> {{user.id}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        <p><strong>Rol:</strong> {{user.role}}</p>
+        <p><strong>Edad:</strong> {{user.age}}</p>
+    </div>
+</body>
+</html>
