@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
-const { createOrGetCart } = require("../services/cartServices");
+const cartService = require("../services/cartServices"); // Importa cartService
+const { authMiddleware } = require('../middlewares/authMiddleware');
+const Ticket = require('../models/Ticket');
 
 // Ruta para la vista principal que redirige a /products
 router.get("/", (req, res) => {
@@ -35,6 +37,9 @@ router.get("/products", async (req, res) => {
 
         const products = await Product.paginate(filter, options);
 
+        // Obtener o crear el carrito para el usuario logueado
+        const cart = await cartService.createOrGetCart(req.user);
+        
         res.render("index", {
             products: products.docs,
             totalPages: products.totalPages,
@@ -53,60 +58,71 @@ router.get("/products", async (req, res) => {
             selectedSort: sort,
             selectedCategory: category,
             searchText: query,
-
+            cartId: cart._id // Ojo: Pasa el cartId al contexto
         });
     } catch (error) {
         res.status(500).send("Error retrieving products.");
     }
 });
 
-router.get("/products/:pid", async (req, res) => {
+// Ruta para ver el detalle de un producto específico
+router.get('/products/:pid', authMiddleware, async (req, res) => {
     try {
         const productId = req.params.pid;
         const product = await Product.findById(productId);
-
+        
         if (!product) {
-            return res.status(404).send("Producto no encontrado");
+            return res.status(404).send('Producto no encontrado');
         }
 
         // Obtener el carrito actual o crear uno nuevo
-        const cart = await createOrGetCart();
+        const cart = await cartService.createOrGetCart(req.user);
 
         // Renderiza la vista del producto
-        res.render("productDetail", {
-            product: product,
-            cartId: cart._id,
-        });
+        res.render("productDetail", { product, cartId: cart._id });
     } catch (error) {
+        console.error("Error retrieving product details:", error);
         res.status(500).send("Error retrieving product details.");
     }
 });
 
-
-// Vista de un carrito específico
-router.get("/carts/:cid", async (req, res) => {
+// Redirecciona al carrito específico del usuario actual
+router.get("/carts", authMiddleware, async (req, res) => {
     try {
-        const cart = await Cart.findById(req.params.cid).populate("products.product");
-        if (!cart) {
-            return res.render("cart", { products: [], cartId: req.params.cid });
+        const cart = await cartService.createOrGetCart(req.user);
+        if (cart) {
+            res.redirect(`/carts/${cart._id}`);
+        } else {
+            res.render('cart', { products: [], cartId: null });
         }
-        res.render("cart", { products: cart.products, cartId: cart._id });
     } catch (error) {
         res.status(500).send("Error retrieving cart.");
     }
 });
 
-router.get("/carts", async (req, res) => {
-  try {
-    const cart = await createOrGetCart();
-    res.redirect(`/carts/${cart._id}`);
-  } catch (error) {
-    res.status(500).send("Error retrieving cart.");
-  }
+// Vista para ver un carrito específico por ID
+router.get("/carts/:cid", authMiddleware, async (req, res) => {
+    try {
+        const cart = await cartService.getCartById(req.params.cid);
+        if (!cart) {
+            return res.status(404).send("Carrito no encontrado");
+        }
+
+        // Cambiar a renderizar la vista directamente
+        res.render("cart", { 
+            products: cart.products || [],
+            cartId: cart._id,
+            totalQuantity: cart.products.length,
+            totalPrice: cart.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+        });
+    } catch (error) {
+        console.error("Error retrieving cart:", error);
+        res.status(500).send("Error retrieving cart.");
+    }
 });
 
 // Vista de administración de productos
-router.get("/admin/products", async (req, res) => {
+router.get("/admin/products", authMiddleware, async (req, res) => {
     try {
         const products = await Product.find();
         res.render("admin", { products });
@@ -115,7 +131,7 @@ router.get("/admin/products", async (req, res) => {
     }
 });
 
-//Vista para el login
+// Vista para el login
 router.get('/api/sessions/login', (req, res) => {
     res.render('login'); 
 });
@@ -125,8 +141,24 @@ router.get('/register', (req, res) => {
     res.render('register');  
 });
 
-router.get('/current', (req, res) => {
-    res.render('current');  
+// Vista del perfil de usuario
+router.get('/user', authMiddleware, (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Usuario no autenticado' });
+    }
+    res.render('current', { user: req.user });
+});
+
+router.get('/purchase/:ticketId', async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.ticketId);
+        if (!ticket) {
+            return res.status(404).send('Ticket no encontrado');
+        }
+        res.render('purchase', { ticket });
+    } catch (error) {
+        res.status(500).send('Error al obtener el ticket');
+    }
 });
 
 module.exports = router;

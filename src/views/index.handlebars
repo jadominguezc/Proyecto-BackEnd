@@ -147,23 +147,23 @@
         <button type="submit">Aplicar</button>
     </form>
 <br><br>
-    {{#each products}}
-    <div class="product">
-        <h2>{{this.title}}</h2>
-        <p>Categoría: {{this.category}}</p>
-        <p>Descripción: {{this.description}}</p>
-        <p>Precio: ${{this.price}}</p>
-        <img src="/{{this.image}}" alt="{{this.title}}" class="product-image" />
-        <form action="/api/carts/{{cartId}}/products/{{this._id}}" method="POST">
-            <input type="number" name="quantity" min="1" value="1" />
-            <button type="submit">Agregar al carrito</button>
-        </form>
-        <br>
-        <a href="/products/{{this._id}}" >
-            <button type="submit">Ver detalle</button>
-        </a>
-    </div>
-    {{/each}}
+{{#each products}}
+<div class="product">
+    <h2>{{this.title}}</h2>
+    <p>Categoría: {{this.category}}</p>
+    <p>Descripción: {{this.description}}</p>
+    <p>Precio: ${{this.price}}</p>
+    <img src="/{{this.image}}" alt="{{this.title}}" class="product-image" />
+    <form action="/api/carts/{{../cartId}}/products/{{this._id}}" method="POST">
+        <input type="number" name="quantity" min="1" value="1" />
+        <button type="submit">Agregar al carrito</button>
+    </form>
+    <br>
+    <a href="/products/{{this._id}}">
+        <button type="submit">Ver detalle</button>
+    </a>
+</div>
+{{/each}}
 
     <!-- Paginación -->
     <div>

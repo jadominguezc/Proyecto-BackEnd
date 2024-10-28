@@ -42,7 +42,10 @@
     </div>
 
     <div class="perfil-container">
-        <p><strong>Bienvenido a tu Perfil </strong> {{user.first_name}}</p>
+        <p>Bienvenido, {{user.first_name}} {{user.last_name}}!</p>
+        <p>Email: {{user.email}}</p>
+        <p>Edad: {{user.age}}</p>
+        <p>Rol: {{user.role}}</p>
     </div>
 </body>
 </html>

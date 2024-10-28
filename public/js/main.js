@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/api/carts', { method: 'POST' });
             const data = await response.json();
-            return data._id; // Devuelve el cartId creado o recuperado
+            return data._id;
         } catch (error) {
             console.error('Error al crear o recuperar el carrito:', error);
             return null;
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
             event.target.reset();
         });
 
-        // Delegación de eventos para manejar la eliminación de productos
         productList.addEventListener('click', async (event) => {
             if (event.target.classList.contains('deleteBtn')) {
                 const productId = event.target.getAttribute('data-id');
@@ -52,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (data.status === 'success') {
                         alert('Producto eliminado exitosamente');
-                        socket.emit('deleteProduct', productId); // Emite evento de eliminación
+                        socket.emit('deleteProduct', productId);
                     } else {
                         alert('Error al eliminar el producto');
                     }
@@ -71,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (event.target.classList.contains('addToCartBtn')) {
                 const productId = event.target.getAttribute('data-id');
 
-                // Recuperar o crear el carrito cada vez que se agrega un producto
                 const cartId = await getOrCreateCart();
 
                 if (cartId) {
@@ -105,16 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('updateProducts', (products) => {
         if (productList) {
             productList.innerHTML = '';
-
-            products.forEach(product => {
-                const productDiv = document.createElement('div');
-                productDiv.classList.add('product');
-                productDiv.innerHTML = `
-                    <h3>${product.title}</h3>
-                    <button class="deleteBtn" data-id="${product._id}">Eliminar</button>
-                                    `;
-                productList.appendChild(productDiv);
-            });
+            if (Array.isArray(products)) {
+                products.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.classList.add('product');
+                    productDiv.innerHTML = `
+                        <h3>${product.title}</h3>
+                        <button class="deleteBtn" data-id="${product._id}">Eliminar</button>`;
+                    productList.appendChild(productDiv);
+                });
+            } else {
+                console.error("Error: `products` no es un array", products);
+            }
         }
     });
 

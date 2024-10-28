@@ -1,13 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const { createUser, authenticateUser, generateJWT } = require('../services/userServices');
-const authMiddleware = require('../middlewares/authMiddleware');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+const jwt = require('jsonwebtoken');
 
 // Registro de usuario
 router.post('/register', async (req, res) => {
     try {
         const newUser = await createUser(req.body);
-        res.status(201).json({ success: true, user: newUser });
+        const token = jwt.sign(
+            { id: newUser._id, role: newUser.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+        res.cookie('token', token, { httpOnly: true });
+        res.redirect('/user');
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -19,17 +26,15 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
         const user = await authenticateUser(email, password);
         const token = generateJWT(user);
-        
-        // Guardar el token en una cookie
         res.cookie('token', token, { httpOnly: true });
-        res.redirect('/current');
+        res.redirect('/user');
     } catch (error) {
         res.status(401).json({ error: 'Credenciales incorrectas' });
     }
 });
 
 // Ruta protegida para obtener el usuario actual
-router.get('/current', authMiddleware, (req, res) => {
+router.get('/user', authMiddleware, (req, res) => { 
     if (!req.user) {
         return res.status(401).json({ error: "Usuario no autenticado" });
     }
@@ -42,6 +47,12 @@ router.get('/current', authMiddleware, (req, res) => {
             age: req.user.age
         }
     });
+});
+
+// Ruta para el logout
+router.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/api/sessions/login');
 });
 
 module.exports = router;

@@ -128,16 +128,36 @@
         <button type="submit">Crear</button>
     </form>
 
-    <h1>Productos en Tiempo Real</h1>
-    <div id="productsContainer">
-        {{#each products}}
-        <div class="product">
-            <h3>{{this.title}}</h3>
-            <button class="deleteBtn" data-id="{{this._id}}">Eliminar</button>
-        </div>
-        {{/each}}
+<h1>Productos en Tiempo Real</h1>
+<div id="productsContainer">
+    {{#each products}}
+    <div class="product">
+        <p>Stock: {{this.stock}}</p>
+        <button class="deleteBtn" data-id="{{this._id}}">Eliminar</button>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/main.js"></script>
+    {{/each}}
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    socket.on('updateProducts', (products) => {
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = ''; 
+
+        products.forEach(product => {
+            const productElement = document.createElement('div');
+            productElement.classList.add("product");
+            productElement.innerHTML = `
+                <h3>${product.title}</h3>
+                <p><br>------Stock: ${product.stock}</p> 
+                <button class="deleteBtn" data-id="${product._id}">Eliminar</button>
+            `;
+            container.appendChild(productElement);
+        });
+    });
+</script>
+<script src="/js/main.js"></script>
 </body>
 </html>

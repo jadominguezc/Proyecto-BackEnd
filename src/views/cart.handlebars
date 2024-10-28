@@ -1,54 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carrito</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
     <style>
-        body { background-color: black; color: white; }
-        h1 { font-weight: bold; }
-        .header { margin: 20px 0; font-size: 1.5em; text-align: center; }
-        .product { border: 1px solid white; margin: 10px; padding: 10px; text-align: center; }
-        .empty-cart { text-align: center; margin: 20px 0; }
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #444;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            color: #ffa500;
+            margin: 0;
+        }
+
+        .cart-container {
+            display: flex;
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 100px auto 20px auto;
+        }
+
+        .product-list {
+            flex: 3;
+        }
+
+        .product-list h1 {
+            font-size: 1.8rem;
+            color: #ffa500;
+            margin-bottom: 20px;
+        }
+
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #444;
+            background-color: #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .product img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .product-info {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        .product-info h3 {
+            margin: 0;
+            color: #ffa500;
+            font-size: 1.2rem;
+        }
+
+        .product-info p {
+            margin: 5px 0;
+        }
+
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .product-actions button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .product-actions button:hover {
+            background-color: #ff6347;
+        }
+
+        .summary {
+            flex: 1;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 5px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+
+        .summary h2 {
+            font-size: 1.5rem;
+            color: #ffa500;
+            margin-bottom: 10px;
+        }
+
+        .summary .total {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .summary button {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .summary button:hover {
+            background-color: #ff6347;
+        }
+
+        .clear-cart-button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .clear-cart-button:hover {
+            background-color: #ff4d4d;
+        }
     </style>
 </head>
 <body>
-    <h1>Carrito</h1>
+    <div class="cart-container">
+        <div class="product-list">
+            <h1>Carrito ({{products.length}} productos)</h1>
 
-    {{#if products.length}}
-    <div class="header">
-        <span>Cantidad</span> |
-        <span>Descripción</span> |
-        <span>Precio Unitario</span> |
-        <span>Precio Total</span>
-    </div>
-    
-    {{#each products}}
-    <div class="product">
-        <h2>{{this.product.title}}</h2>
-        <p>Categoría: {{this.product.category}}</p>
-        <p>Descripción: {{this.product.description}}</p>
-        <p>Precio: ${{this.product.price}}</p>
-        <p>Cantidad: {{this.quantity}}</p>
-        <p>Total: ${{multiply this.quantity this.product.price}}</p>
-        <form action="/api/carts/{{../cartId}}/products/{{this.product._id}}" method="PUT">
-            <input type="number" name="quantity" min="1" value="{{this.quantity}}" />
-            <button type="submit">Actualizar cantidad</button>
-        </form>
-        <form action="/api/carts/{{../cartId}}/products/{{this.product._id}}" method="DELETE">
-            <button type="submit">Eliminar</button>
-        </form>
-    </div>
-    {{/each}}
+            <button class="clear-cart-button" onclick="clearCart('{{cartId}}')">Vaciar Carrito</button>
 
-    <form action="/api/carts/{{cartId}}" method="DELETE">
-        <button type="submit">Vaciar carrito</button>
-    </form>
+            {{#each products}}
+            <div class="product">
+                <img src="/{{this.product.image}}" alt="{{this.product.title}}">
+                <div class="product-info">
+                    <h3>{{this.product.title}}</h3>
+                    <p>Precio Unitario: ${{this.product.price}}</p>
+                    <p>Total: ${{multiply this.quantity this.product.price}}</p>
+                </div>
+                <div class="product-actions">
+                    <form action="/api/carts/{{../cartId}}/products/{{this.product._id}}" method="POST" data-method="PUT">
+                        <input type="number" name="quantity" min="1" value="{{this.quantity}}" style="width: 40px;">
+                        <button type="submit">Actualizar</button>
+                    </form>
+                    <button onclick="deleteProduct('{{../cartId}}', '{{this.product._id}}')">Eliminar</button>
+                </div>
+            </div>
+            {{/each}}
+        </div>
 
-    {{else}}
-    <div class="empty-cart">
-        <p>Aún no has añadido productos al carrito</p>
+        <!-- Resumen de la compra -->
+        <div class="summary">
+            <h2>Resumen de la compra</h2>
+            <p>Productos: ({{products.length}})</p>
+            <p class="total">Total: ${{calculateTotal products}}</p>
+            <button id="confirmPurchaseButton">Confirmar compra</button>
+        </div>
     </div>
-    {{/if}}
+
+    <script>
+   
+    // Función para vaciar el carrito
+    function clearCart(cartId) {
+        const url = `/api/carts/${cartId}`;
+
+        fetch(url, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                location.reload(); 
+            } else {
+                console.error("Error al vaciar el carrito:", data.message);
+            }
+        })
+        .catch(error => console.error("Error en la solicitud:", error));
+    }
+
+    // Script para manejar métodos PUT en los formularios de actualización de cantidad
+    document.querySelectorAll('form[data-method="PUT"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const action = form.getAttribute('action');
+            const quantity = form.querySelector('input[name="quantity"]').value;
+
+            fetch(action, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity: parseInt(quantity, 10) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload(); 
+                } else {
+                    console.error("Error actualizando el carrito:", data.message);
+                }
+            })
+            .catch(error => console.error("Error en la solicitud:", error));
+        });
+    });
+
+    // Función para eliminar un producto individual del carrito
+    function deleteProduct(cartId, productId) {
+        const url = `/api/carts/${cartId}/products/${productId}`;
+
+        fetch(url, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                location.reload(); 
+            } else {
+                console.error("Error eliminando producto del carrito:", data.message);
+            }
+        })
+        .catch(error => console.error("Error en la solicitud:", error));
+    }
+
+    // Script para postear la solicitud de compra
+document.getElementById('confirmPurchaseButton').addEventListener('click', function () {
+        const cartId = '{{cartId}}';
+        const url = `/api/carts/${cartId}/purchase`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Respuesta de compra:", data); 
+
+            if (data.status === "success" && data.ticketId) {
+                
+                window.location.href = `/purchase/${data.ticketId}`;
+            } else if (data.status === "error" && data.missingProducts) {
+                alert("Algunos productos no tienen stock suficiente: " + data.missingProducts.join(", "));
+            } else {
+                alert("Error en la compra");
+            }
+        })
+        .catch(error => {
+            console.error("Error en la solicitud de compra:", error);
+            alert("Error al procesar la compra");
+        });
+    });
+    </script>
 </body>
 </html>
