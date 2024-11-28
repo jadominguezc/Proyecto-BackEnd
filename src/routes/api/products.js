@@ -48,8 +48,16 @@ router.post("/", adminOnly, upload.single("productImage"), async (req, res) => {
       });
     }
 
-    const image = `../uploads/${req.file.filename}`; 
-    const productData = { code, title, description, price, stock, category, image };
+    const image = `../uploads/${req.file.filename}`;
+    const productData = {
+      code,
+      title,
+      description,
+      price,
+      stock,
+      category,
+      image,
+    };
 
     await createProduct(productData);
     res.redirect("/products");
@@ -66,7 +74,9 @@ router.delete("/:id", adminOnly, async (req, res) => {
     await deleteProduct(productId);
     res.status(200).json({ status: "success", message: "Product deleted" });
   } catch (error) {
-    res.status(500).json({ status: "error", message: "Error deleting product" });
+    res
+      .status(500)
+      .json({ status: "error", message: "Error deleting product" });
   }
 });
 

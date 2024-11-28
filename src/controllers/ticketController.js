@@ -1,9 +1,8 @@
-const sendEmail = require('../config/emailConfig'); // Configuración del correo electrónico
+const sendEmail = require("../config/emailConfig"); // Configuración del correo electrónico
 
 const sendTicketEmail = async (ticket) => {
-  const { purchaser, code, purchase_datetime, amount } = ticket;
+  const { purchaser, code, purchase_datetime, amount } = ticket; // Contenido del correo
 
-  // Contenido del correo
   const emailContent = `
     <h1>Detalles de tu Compra</h1>
     <p><strong>Código:</strong> ${code}</p>
@@ -11,9 +10,8 @@ const sendTicketEmail = async (ticket) => {
     <p><strong>Monto Total:</strong> $${amount}</p>
     <p><strong>Comprador:</strong> ${purchaser}</p>
     <p>¡Gracias por tu compra!</p>
-  `;
+    `; // Enviar el correo
 
-  // Enviar el correo
   try {
     await sendEmail(purchaser, "Detalles de tu Compra", emailContent);
     console.log("Correo enviado exitosamente a:", purchaser);
