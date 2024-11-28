@@ -10,4 +10,5 @@ router.get("/", authMiddleware, (req, res) => {
   res.render("current", { user: req.user });
 });
 
+
 module.exports = router;

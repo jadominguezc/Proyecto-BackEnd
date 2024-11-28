@@ -1,6 +1,7 @@
 {
   "name": "backend-final",
   "version": "1.0.0",
+  "type": "commonjs", 
   "description": "Proyecto final de backend con Node.js, Express, Handlebars, WebSocket y MongoDB",
   "main": "src/app.js",
   "scripts": {

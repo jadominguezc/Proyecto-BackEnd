@@ -8,27 +8,27 @@ const { engine } = require("express-handlebars");
 const http = require("http");
 const socketIo = require("socket.io");
 const jwt = require("jsonwebtoken");
+
 const User = require("./models/User");
 const productRepository = require("./repositories/productRepository");
 
-const {
-  authMiddleware,
-  adminOnly,
-  userOnly,
-} = require("./middlewares/authMiddleware");
+const authMiddleware = require("./middlewares/authMiddleware").authMiddleware;
+const adminOnly = require("./middlewares/authMiddleware").adminOnly;
+const userOnly = require("./middlewares/authMiddleware").userOnly;
+
 const productsRouter = require("./routes/api/products");
 const cartsRouter = require("./routes/api/carts");
 const sessionsRouter = require("./routes/sessions");
 const viewsRouter = require("./routes/views");
 const userRouter = require("./routes/user");
+const mockingRoutes = require("./routes/api/mocks.router");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
 // Conexión a MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -93,6 +93,9 @@ app.use("/api/sessions", sessionsRouter);
 app.use("/user", authMiddleware, userRouter);
 app.use("/", viewsRouter);
 
+// Mocking Users
+app.use("/api/mocks", mockingRoutes);
+
 // WebSocket
 io.on("connection", async (socket) => {
   console.log("A user connected to admin/products");
@@ -132,8 +135,11 @@ io.on("connection", async (socket) => {
     console.log("User disconnected");
   });
 });
+
 server.listen(process.env.PORT || 8080, () => {
   console.log(
     `Server listening on http://localhost:${process.env.PORT || 8080}`
   );
 });
+
+module.exports = app;
