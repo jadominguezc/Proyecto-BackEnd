@@ -1,8 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const { authMiddleware } = require("../middlewares/authMiddleware");
+import express from "express";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
-// Ruta para mostrar la vista del usuario actual
+const router = express.Router();
+
 router.get("/", authMiddleware, (req, res) => {
   if (!req.user) {
     return res.status(401).json({ error: "Usuario no autenticado" });
@@ -10,5 +10,4 @@ router.get("/", authMiddleware, (req, res) => {
   res.render("current", { user: req.user });
 });
 
-
-module.exports = router;
+export default router;

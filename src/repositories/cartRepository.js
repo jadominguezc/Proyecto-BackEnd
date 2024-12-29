@@ -1,4 +1,4 @@
-const cartDAO = require("../daos/cart.dao");
+import cartDAO from "../daos/cart.dao.js";
 
 class CartRepository {
   async getOrCreateCart(userId) {
@@ -29,4 +29,4 @@ class CartRepository {
   }
 }
 
-module.exports = new CartRepository();
+export default new CartRepository();

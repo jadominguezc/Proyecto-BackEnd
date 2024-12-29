@@ -1,0 +1,64 @@
+components:
+  requests:
+    MockingDataRequest:
+      description: "Parámetros para generar datos simulados de usuarios y mascotas"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              users:
+                type: integer
+                description: "Cantidad de usuarios a generar"
+                example: 50
+              pets:
+                type: integer
+                description: "Cantidad de mascotas asociadas a cada usuario"
+                example: 2
+
+    LoginRequest:
+      description: "Credenciales requeridas para iniciar sesión"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                description: "Correo electrónico del usuario"
+                example: "usuario@otakusushichile.com"
+              password:
+                type: string
+                description: "Contraseña del usuario"
+                example: "contraseña123"
+
+    RegisterRequest:
+      description: "Información requerida para registrar un usuario"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                description: "Nombre del usuario"
+                example: "John"
+              last_name:
+                type: string
+                description: "Apellido del usuario"
+                example: "Shu"
+              email:
+                type: string
+                description: "Correo electrónico del usuario"
+                example: "usuario@otakusushichile.com"
+              age:
+                type: integer
+                description: "Edad del usuario"
+                example: 30
+              password:
+                type: string
+                description: "Contraseña del usuario"
+                example: "password123"

@@ -1,4 +1,4 @@
-const User = require("../models/User");
+import User from "../models/User.js";
 
 class UserRepository {
   // Buscar usuario por correo electrónico
@@ -10,8 +10,9 @@ class UserRepository {
       console.error("Error al buscar usuario por email:", error);
       throw error;
     }
-  } // Buscar usuario por ID
+  }
 
+  // Buscar usuario por ID
   async findById(userId) {
     try {
       const user = await User.findById(userId);
@@ -20,8 +21,9 @@ class UserRepository {
       console.error("Error al buscar usuario por ID:", error);
       throw error;
     }
-  } // Crear un nuevo usuario
+  }
 
+  // Crear un nuevo usuario
   async createUser(userData) {
     try {
       const newUser = new User(userData);
@@ -30,8 +32,9 @@ class UserRepository {
       console.error("Error al crear un nuevo usuario:", error);
       throw error;
     }
-  } // Actualizar un usuario existente
+  }
 
+  // Actualizar un usuario existente
   async updateUser(userId, updateData) {
     try {
       const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
@@ -42,8 +45,9 @@ class UserRepository {
       console.error("Error al actualizar usuario:", error);
       throw error;
     }
-  } // Eliminar un usuario por ID
+  }
 
+  // Eliminar un usuario por ID
   async deleteUser(userId) {
     try {
       await User.findByIdAndDelete(userId);
@@ -54,4 +58,4 @@ class UserRepository {
   }
 }
 
-module.exports = new UserRepository();
+export default new UserRepository();

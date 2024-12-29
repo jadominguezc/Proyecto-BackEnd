@@ -1,15 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const upload = require('../middlewares/multerConfig');
-const { getProducts, createProduct, deleteProduct } = require('../controllers/productController');
+import productRepository from "../repositories/productRepository.js";
 
-// Obtener productos con filtros, paginación y ordenamiento
-router.get('/', getProducts);
+export const getProducts = async ({ limit, page, sort, query }) => {
+  const filter = query ? { title: new RegExp(query, "i") } : {};
+  const options = {
+    limit: parseInt(limit, 10) || 10,
+    page: parseInt(page, 10) || 1,
+    sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
+  };
 
-// Crear un nuevo producto con soporte para imágenes
-router.post('/', upload.single('productImage'), createProduct);
+  return await productRepository.getProducts(filter, options);
+};
 
-// Eliminar un producto por ID
-router.delete('/:id', deleteProduct);
+export const createProduct = async (productData) => {
+  return await productRepository.addProduct(productData);
+};
 
-module.exports = router;
+export const deleteProduct = async (productId) => {
+  return await productRepository.removeProduct(productId);
+};

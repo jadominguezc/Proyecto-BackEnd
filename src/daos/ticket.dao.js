@@ -1,4 +1,4 @@
-const Ticket = require("../models/Ticket");
+import Ticket from "../models/Ticket.js";
 
 class TicketDAO {
   async createTicket(ticketData) {
@@ -15,4 +15,4 @@ class TicketDAO {
   }
 }
 
-module.exports = new TicketDAO();
+export default new TicketDAO();

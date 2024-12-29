@@ -1,9 +1,9 @@
-const userService = require("../services/userServices");
-const UserDTO = require("../dtos/user.dto");
-const cartService = require("../services/cartServices");
+import * as userService from "../services/userServices.js";
+import UserDTO from "../dtos/user.dto.js";
+import * as cartService from "../services/cartServices.js";
 
 // Registro de usuario
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     const newUser = await userService.createUser(req.body);
     const cart = await cartService.createOrGetCart(newUser);
@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
 };
 
 // Login de usuario
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await userService.authenticateUser(email, password);
@@ -36,7 +36,7 @@ const loginUser = async (req, res) => {
 };
 
 // Obtener el usuario actual
-const getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ error: "Usuario no autenticado" });
   }
@@ -47,10 +47,4 @@ const getCurrentUser = async (req, res) => {
 
   const userDTO = new UserDTO(req.user);
   res.status(200).json({ user: userDTO });
-};
-
-module.exports = {
-  registerUser,
-  loginUser,
-  getCurrentUser,
 };

@@ -1,10 +1,10 @@
-const { Router } = require("express");
-const mockingController = require("../../controllers/mockingController");
+import { Router } from "express";
+import { generateMockingData, generateAndInsertData } from "../../controllers/mockingController.js";
 
 const router = Router();
 
-router.get("/mockingusers", mockingController.generateMockingData);
+router.get("/mockingusers", generateMockingData);
 
-router.post("/generateData", mockingController.generateAndInsertData);
+router.post("/generateData", generateAndInsertData);
 
-module.exports = router;
+export default router;

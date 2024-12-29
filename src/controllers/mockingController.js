@@ -1,12 +1,12 @@
-const mockingServices = require("../services/mockingServices");
-const User = require("../models/User");
+import * as mockingServices from "../services/mockingServices.js";
+import User from "../models/User.js";
 
-const generateMockingData = async (req, res) => {
+export const generateMockingData = async (req, res) => {
   try {
     console.log("Request received for generating mocked users.");
-    
+
     // Generar usuarios simulados (por defecto 50)
-    const mockedUsers = mockingServices.generateMockUsers(50); 
+    const mockedUsers = mockingServices.generateMockUsers(50);
     console.log("Mocked users successfully generated:", mockedUsers);
 
     res.status(200).json({
@@ -22,10 +22,10 @@ const generateMockingData = async (req, res) => {
   }
 };
 
-const generateAndInsertData = async (req, res) => {
+export const generateAndInsertData = async (req, res) => {
   try {
     console.log("Request received for generating and inserting data.");
-    
+
     const { users, pets } = req.body;
 
     // Validar parámetros numéricos
@@ -40,16 +40,30 @@ const generateAndInsertData = async (req, res) => {
     const generatedUsers = mockingServices.generateMockUsers(users, pets);
     console.log(`Generated ${users} users with ${pets} pets each.`);
 
-    // Insertar usuarios en la base de datos
-    await User.deleteMany({}); 
-    const insertedUsers = await User.insertMany(generatedUsers);
-    console.log("Users successfully inserted into the database:", insertedUsers);
+    // Obtener los correos electrónicos existentes en la base de datos
+    const existingEmails = await User.find({}).select("email").lean();
+    const existingEmailSet = new Set(existingEmails.map((user) => user.email));
 
-    res.status(200).json({
-      status: "success",
-      message: `Generated and inserted ${users} users with ${pets} pets each.`,
-      data: insertedUsers,
-    });
+    // Filtrar solo los usuarios que no estén ya registrados
+    const newUsers = generatedUsers.filter((user) => !existingEmailSet.has(user.email));
+
+    if (newUsers.length > 0) {
+      // Insertar los nuevos usuarios en la base de datos
+      const insertedUsers = await User.insertMany(newUsers, { ordered: false });
+      console.log("New users successfully inserted into the database:", insertedUsers);
+
+      res.status(200).json({
+        status: "success",
+        message: `Generated and inserted ${newUsers.length} new users with ${pets} pets each.`,
+        data: insertedUsers,
+      });
+    } else {
+      console.log("No new users to insert.");
+      res.status(200).json({
+        status: "success",
+        message: "No new users to insert. All users already exist in the database.",
+      });
+    }
   } catch (error) {
     console.error("Error in generateAndInsertData:", error);
     res.status(500).json({
@@ -57,9 +71,4 @@ const generateAndInsertData = async (req, res) => {
       message: "Error generating and inserting data",
     });
   }
-};
-
-module.exports = {
-  generateMockingData,
-  generateAndInsertData,
 };

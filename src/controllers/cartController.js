@@ -1,16 +1,15 @@
-const cartService = require("../services/cartServices");
+import * as cartService from "../services/cartServices.js";
 
-const createOrGetCart = async (req, res) => {
+export async function createOrGetCart(req, res) {
   try {
     const cart = await cartService.createOrGetCart(req.user);
     res.status(201).json(cart);
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
   }
-};
+}
 
-// Implementación de la compra
-const purchaseCart = async (req, res) => {
+export async function purchaseCart(req, res) {
   try {
     const cartId = req.params.cid;
     const userEmail = req.user.email;
@@ -26,6 +25,4 @@ const purchaseCart = async (req, res) => {
     console.error("Error during purchase process:", error);
     return { success: false, error: error.message, missingProducts: [] };
   }
-};
-
-module.exports = { createOrGetCart, purchaseCart };
+}

@@ -1,24 +1,18 @@
-const ticketDAO = require("../daos/ticket.dao");
-const TicketDTO = require("../dtos/ticket.dto");
-const Ticket = require("../models/Ticket");
-const { sendTicketEmail } = require("../controllers/ticketController");
+import Ticket from "../models/Ticket.js";
+import { sendTicketEmail } from "../controllers/ticketController.js";
 
 const createTicket = async (purchaser, amount) => {
   try {
-    // Genera un código único para el ticket
-    const code = `TCKT-${Date.now()}-${Math.floor(Math.random() * 1000)}`; // Crea el ticket en la base de datos
-
+    const code = `TCKT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const ticket = new Ticket({
       code,
       purchase_datetime: new Date(),
       amount,
       purchaser,
-    }); // Guarda el ticket y devuelve el resultado
+    });
 
-    const savedTicket = await ticket.save(); // Enviar el correo electrónico al comprador después de crear el ticket
-
+    const savedTicket = await ticket.save();
     await sendTicketEmail(savedTicket);
-
     return savedTicket;
   } catch (error) {
     console.error("Error al generar el ticket:", error);
@@ -26,4 +20,4 @@ const createTicket = async (purchaser, amount) => {
   }
 };
 
-module.exports = { createTicket };
+export default { createTicket };

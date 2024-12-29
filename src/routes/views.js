@@ -1,13 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const Product = require("../models/Product");
-const cartService = require("../services/cartServices"); // Importa cartService
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const Ticket = require("../models/Ticket");
+import express from "express";
+import * as cartService from "../services/cartServices.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import Ticket from "../models/Ticket.js";
+import Product from "../models/Product.js";
 
-// Ruta para la vista principal que redirige a /products
+const router = express.Router();
+
+// Ruta para la vista principal que redirige a login
 router.get("/", (req, res) => {
-  res.redirect("/products");
+  res.redirect("/api/sessions/login");
 });
 
 // Vista principal de productos con paginación
@@ -20,21 +21,18 @@ router.get("/products", async (req, res) => {
       sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
     };
 
-    const filter = {}; // Filtro por categoría
-    if (category && category !== "") {
-      filter.category = new RegExp(category, "i");
-    } // Filtro por query
-
-    if (query && query !== "") {
+    const filter = {};
+    if (category) filter.category = new RegExp(category, "i");
+    if (query) {
       filter.$or = [
         { title: new RegExp(query, "i") },
         { description: new RegExp(query, "i") },
       ];
     }
 
-    const products = await Product.paginate(filter, options); // Obtener o crear el carrito para el usuario logueado
-
+    const products = await Product.paginate(filter, options);
     const cart = await cartService.createOrGetCart(req.user);
+
     res.render("index", {
       products: products.docs,
       totalPages: products.totalPages,
@@ -53,27 +51,35 @@ router.get("/products", async (req, res) => {
       selectedSort: sort,
       selectedCategory: category,
       searchText: query,
-      cartId: cart._id, // Ojo: Pasa el cartId al contexto
+      cartId: cart._id,
     });
   } catch (error) {
     res.status(500).send("Error retrieving products.");
   }
 });
 
+// Nueva Ruta para la Vista de Administración de Productos
+router.get("/admin/products", async (req, res) => {
+  try {
+    const products = await Product.find(); // Obtiene los productos
+    res.render("admin", { products }); // Pasa los productos al template
+  } catch (error) {
+    console.error("Error en la ruta /admin/products:", error);
+    res.status(500).send("Error al recuperar productos");
+  }
+});
+  
+
 // Ruta para ver el detalle de un producto específico
 router.get("/products/:pid", authMiddleware, async (req, res) => {
   try {
     const productId = req.params.pid;
     const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).send("Producto no encontrado");
-    } // Obtener el carrito actual o crear uno nuevo
+    if (!product) return res.status(404).send("Producto no encontrado");
 
-    const cart = await cartService.createOrGetCart(req.user); // Renderiza la vista del producto
-
+    const cart = await cartService.createOrGetCart(req.user);
     res.render("productDetail", { product, cartId: cart._id });
   } catch (error) {
-    console.error("Error retrieving product details:", error);
     res.status(500).send("Error retrieving product details.");
   }
 });
@@ -96,9 +102,7 @@ router.get("/carts", authMiddleware, async (req, res) => {
 router.get("/carts/:cid", authMiddleware, async (req, res) => {
   try {
     const cart = await cartService.getCartById(req.params.cid);
-    if (!cart) {
-      return res.status(404).send("Carrito no encontrado");
-    } // Cambiar a renderizar la vista directamente
+    if (!cart) return res.status(404).send("Carrito no encontrado");
 
     res.render("cart", {
       products: cart.products || [],
@@ -110,18 +114,7 @@ router.get("/carts/:cid", authMiddleware, async (req, res) => {
       ),
     });
   } catch (error) {
-    console.error("Error retrieving cart:", error);
     res.status(500).send("Error retrieving cart.");
-  }
-});
-
-// Vista de administración de productos
-router.get("/admin/products", authMiddleware, async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.render("admin", { products });
-  } catch (error) {
-    res.status(500).send("Error retrieving products.");
   }
 });
 
@@ -137,22 +130,19 @@ router.get("/register", (req, res) => {
 
 // Vista del perfil de usuario
 router.get("/user", authMiddleware, (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: "Usuario no autenticado" });
-  }
+  if (!req.user) return res.status(401).json({ error: "Usuario no autenticado" });
   res.render("current", { user: req.user });
 });
 
+// Vista de un ticket específico
 router.get("/purchase/:ticketId", async (req, res) => {
   try {
     const ticket = await Ticket.findById(req.params.ticketId);
-    if (!ticket) {
-      return res.status(404).send("Ticket no encontrado");
-    }
+    if (!ticket) return res.status(404).send("Ticket no encontrado");
     res.render("purchase", { ticket });
   } catch (error) {
     res.status(500).send("Error al obtener el ticket");
   }
 });
 
-module.exports = router;
+export default router;

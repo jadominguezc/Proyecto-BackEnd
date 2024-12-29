@@ -1,10 +1,10 @@
-const { faker } = require("@faker-js/faker");
-const bcrypt = require("bcrypt");
-const mongoose = require("mongoose");
+import { faker } from "@faker-js/faker";
+import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
-const generateMockUsers = (userCount = 50, petCount = 0) => {
+export const generateMockUsers = (userCount = 50, petCount = 0) => {
   const users = [];
-  const hashedPassword = bcrypt.hashSync("coder123", 10); 
+  const hashedPassword = bcrypt.hashSync("coder123", 10);
 
   for (let i = 0; i < userCount; i++) {
     const user = {
@@ -20,8 +20,4 @@ const generateMockUsers = (userCount = 50, petCount = 0) => {
     users.push(user);
   }
   return users;
-};
-
-module.exports = {
-  generateMockUsers,
 };

@@ -1,11 +1,11 @@
-const cartRepository = require("../repositories/cartRepository");
-const productRepository = require("../repositories/productRepository");
-const ticketService = require("./ticketServices");
-const Cart = require("../models/Cart");
+import cartRepository from "../repositories/cartRepository.js";
+import productRepository from "../repositories/productRepository.js";
+import ticketService from "./ticketServices.js";
+import Cart from "../models/Cart.js";
 
 const createOrGetCart = async (user) => {
   if (!user || !user._id) {
-    throw new Error("User not provided or user ID is missing.");
+    throw new Error("ID no suministrado");
   }
 
   if (user.cart) {
@@ -19,7 +19,7 @@ const createOrGetCart = async (user) => {
   return newCart;
 };
 
-async function getCartById(cartId) {
+const getCartById = async (cartId) => {
   try {
     const cart = await Cart.findById(cartId).populate("products.product");
     return cart;
@@ -27,7 +27,7 @@ async function getCartById(cartId) {
     console.error("Error en getCartById:", error);
     throw error;
   }
-}
+};
 
 const updateCart = async (cartId, productsToUpdate) => {
   const cart = await cartRepository.getCartById(cartId);
@@ -89,7 +89,7 @@ const purchaseCart = async (cartId, userEmail) => {
   }
 
   if (totalAmount > 0) {
-    const ticket = await ticketService.createTicket(userEmail, totalAmount); // Verificación adicional para asegurar que el ticket fue creado correctamente
+    const ticket = await ticketService.createTicket(userEmail, totalAmount);
 
     if (ticket && ticket._id) {
       cart.products = missingProducts.length
@@ -107,7 +107,7 @@ const purchaseCart = async (cartId, userEmail) => {
   return { success: false, missingProducts };
 };
 
-module.exports = {
+export {
   createOrGetCart,
   updateCart,
   purchaseCart,

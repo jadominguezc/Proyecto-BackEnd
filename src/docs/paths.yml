@@ -1,0 +1,76 @@
+paths:
+  /user:
+    get:
+      summary: "Obtener el perfil del usuario actualmente autenticado"
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: "#/components/responses/UserProfileResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/mocks/mockingusers:
+    get:
+      summary: "Generar datos simulados de usuarios"
+      tags:
+        - Mocks
+      responses:
+        200:
+          $ref: "#/components/responses/MockedUsersResponse"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /api/mocks/generateData:
+    post:
+      summary: "Generar e insertar datos simulados en la base de datos"
+      tags:
+        - Mocks
+      requestBody:
+        $ref: "#/components/requests/MockingDataRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/DataInsertedResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /api/sessions/register:
+    post:
+      summary: "Registrar un nuevo usuario"
+      tags:
+        - Sessions
+      requestBody:
+        $ref: "#/components/requests/RegisterRequest"
+      responses:
+        201:
+          $ref: "#/components/responses/UserRegisteredResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /api/sessions/login:
+    post:
+      summary: "Iniciar sesión"
+      tags:
+        - Sessions
+      requestBody:
+        $ref: "#/components/requests/LoginRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/LoginSuccess"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/sessions/logout:
+    get:
+      summary: "Cerrar sesión"
+      tags:
+        - Sessions
+      responses:
+        200:
+          $ref: "#/components/responses/LogoutSuccess"

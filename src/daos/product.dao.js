@@ -1,4 +1,4 @@
-const Product = require("../models/Product");
+import Product from "../models/Product.js";
 
 class ProductDAO {
   async getAllProducts(filter, options) {
@@ -32,4 +32,4 @@ class ProductDAO {
   }
 }
 
-module.exports = new ProductDAO();
+export default new ProductDAO();

@@ -1,7 +1,7 @@
-const productService = require("../services/productServices");
+import * as productService from "../services/productServices.js";
 
 // Obtener productos con filtros, paginación y ordenamiento
-const getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
     const products = await productService.getProducts({
@@ -36,7 +36,7 @@ const getProducts = async (req, res) => {
 };
 
 // Crear un nuevo producto
-const createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
   const { code, title, description, price, stock, category } = req.body;
 
   try {
@@ -69,7 +69,7 @@ const createProduct = async (req, res) => {
 };
 
 // Eliminar un producto por ID
-const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     await productService.deleteProduct(productId);
@@ -80,10 +80,4 @@ const deleteProduct = async (req, res) => {
       .status(500)
       .json({ status: "error", message: "Error deleting product" });
   }
-};
-
-module.exports = {
-  getProducts,
-  createProduct,
-  deleteProduct,
 };

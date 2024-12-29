@@ -1,0 +1,171 @@
+components:
+  responses:
+    UserProfileResponse:
+      description: "Detalles del perfil del usuario autenticado"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: "ID único del usuario"
+              email:
+                type: string
+                description: "Correo electrónico del usuario"
+              role:
+                type: string
+                description: "Rol del usuario (admin o user)"
+              age:
+                type: integer
+                description: "Edad del usuario"
+            example:
+              id: "60d21b9967d0d8992e610c85"
+              email: "juan.perez@example.com"
+              role: "admin"
+              age: 30
+
+    MockedUsersResponse:
+      description: "Usuarios simulados generados exitosamente"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: "Estado de la respuesta"
+                example: "success"
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    first_name:
+                      type: string
+                      example: "Juan"
+                    last_name:
+                      type: string
+                      example: "Diaz"
+                    email:
+                      type: string
+                      example: "juan.diaz@otaku.com"
+                    age:
+                      type: integer
+                      example: 25
+                    role:
+                      type: string
+                      example: "user"
+
+    DataInsertedResponse:
+      description: "Datos simulados generados e insertados exitosamente en la base de datos"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: "Estado de la respuesta"
+                example: "success"
+              message:
+                type: string
+                description: "Mensaje indicando la cantidad de datos insertados"
+                example: "Generated and inserted 50 users with 2 pets each."
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    first_name:
+                      type: string
+                      example: "Juan"
+                    last_name:
+                      type: string
+                      example: "Diaz"
+                    email:
+                      type: string
+                      example: "juan.diaz@otaku.com"
+                    age:
+                      type: integer
+                      example: 25
+                    role:
+                      type: string
+                      example: "user"
+
+    UserRegisteredResponse:
+      description: "Usuario registrado exitosamente"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: "ID único del usuario"
+              email:
+                type: string
+                description: "Correo electrónico registrado"
+              role:
+                type: string
+                description: "Rol asignado al usuario"
+            example:
+              id: "64d21b9967d0d8992e612345"
+              email: "nuevo.usuario@ejemplo.com"
+              role: "user"
+
+    LoginSuccess:
+      description: "Inicio de sesión exitoso"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: "Token de acceso para el usuario"
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    LogoutSuccess:
+      description: "Cierre de sesión exitoso"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Cierre de sesión exitoso"
+
+    Unauthorized:
+      description: "Acceso no autorizado. El token JWT es requerido o inválido"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Usuario no autenticado"
+
+    BadRequest:
+      description: "Solicitud inválida. Verifique los parámetros"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Datos proporcionados inválidos"
+
+    ServerError:
+      description: "Error interno del servidor"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Error interno al registrar el usuario"

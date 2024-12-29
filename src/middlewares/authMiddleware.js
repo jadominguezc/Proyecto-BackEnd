@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 // Middleware genérico de autenticación
-const authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ error: "Acceso no autorizado" });
@@ -23,7 +23,7 @@ const authMiddleware = async (req, res, next) => {
 };
 
 // Middleware para proteger rutas de administrador
-const adminOnly = (req, res, next) => {
+export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
   } else {
@@ -32,12 +32,10 @@ const adminOnly = (req, res, next) => {
 };
 
 // Middleware para proteger rutas de usuario
-const userOnly = (req, res, next) => {
+export const userOnly = (req, res, next) => {
   if (req.user && req.user.role === "user") {
     next();
   } else {
     res.status(403).json({ error: "Acceso denegado" });
   }
 };
-
-module.exports = { authMiddleware, adminOnly, userOnly };

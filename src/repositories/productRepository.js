@@ -1,4 +1,4 @@
-const productDAO = require("../daos/product.dao");
+import productDAO from "../daos/product.dao.js";
 
 class ProductRepository {
   async getProducts(filter, options) {
@@ -22,4 +22,4 @@ class ProductRepository {
   }
 }
 
-module.exports = new ProductRepository();
+export default new ProductRepository();

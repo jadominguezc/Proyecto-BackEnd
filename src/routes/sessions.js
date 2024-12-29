@@ -1,12 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import {
   createUser,
   authenticateUser,
   generateJWT,
-} = require("../services/userServices");
-const { authMiddleware } = require("../middlewares/authMiddleware");
-const jwt = require("jsonwebtoken");
+} from "../services/userServices.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import jwt from "jsonwebtoken";
+
+const router = express.Router();
 
 // Registro de usuario
 router.post("/register", async (req, res) => {
@@ -59,4 +60,4 @@ router.get("/logout", (req, res) => {
   res.redirect("/api/sessions/login");
 });
 
-module.exports = router;
+export default router;

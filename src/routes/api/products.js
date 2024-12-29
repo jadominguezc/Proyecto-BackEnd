@@ -1,18 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const upload = require("../../middlewares/multerConfig");
-const { adminOnly } = require("../../middlewares/authMiddleware");
-const {
+import express from "express";
+import upload from "../../middlewares/multerConfig.js";
+import { adminOnly } from "../../middlewares/authMiddleware.js";
+import {
   getProducts,
   createProduct,
   deleteProduct,
-} = require("../../services/productServices");
+} from "../../services/productServices.js";
+
+const router = express.Router();
 
 // Obtener productos con filtros, paginación y ordenamiento
-router.get("/products", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
     const products = await getProducts({ limit, page, sort, query });
+
     res.json({
       status: "success",
       payload: products.docs,
@@ -30,26 +32,24 @@ router.get("/products", async (req, res) => {
         : null,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ status: "error", message: "Error retrieving products" });
+    res.status(500).json({ status: "error", message: "Error retrieving products" });
   }
 });
 
-// Crear un nuevo producto, solo para administradores - role adminOnly
+// Crear un nuevo producto
 router.post("/", adminOnly, upload.single("productImage"), async (req, res) => {
-  const { code, title, description, price, stock, category } = req.body;
-
   try {
+    const { code, title, description, price, stock, category } = req.body;
     if (!code || !title || !price || !stock || !category) {
-      return res.status(404).json({
+      return res.status(400).json({
         message_error: "Falta algún campo por completar",
         success: false,
       });
     }
 
-    const image = `../uploads/${req.file.filename}`;
-    const productData = {
+    const image = req.file ? `../uploads/${req.file.filename}` : null;
+
+    await createProduct({
       code,
       title,
       description,
@@ -57,27 +57,23 @@ router.post("/", adminOnly, upload.single("productImage"), async (req, res) => {
       stock,
       category,
       image,
-    };
+    });
 
-    await createProduct(productData);
-    res.redirect("/products");
+    res.status(201).json({ status: "success", message: "Product created successfully" });
   } catch (error) {
-    console.error("Error creating product:", error);
     res.status(500).json({ message_error: error.message, success: false });
   }
 });
 
-// Eliminar un producto, solo para administradores - role adminOnly
+// Eliminar un producto
 router.delete("/:id", adminOnly, async (req, res) => {
   try {
     const productId = req.params.id;
     await deleteProduct(productId);
     res.status(200).json({ status: "success", message: "Product deleted" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ status: "error", message: "Error deleting product" });
+    res.status(500).json({ status: "error", message: "Error deleting product" });
   }
 });
 
-module.exports = router;
+export default router;

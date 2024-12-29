@@ -1,8 +1,8 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 // Configuración del transportador de correo
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Función para enviar correos
-const sendEmail = async (to, subject, htmlContent) => {
+export const sendEmail = async (to, subject, htmlContent) => {
   try {
     await transporter.sendMail({
       from: `"Otaku Sushi Chile" <${process.env.EMAIL_USER}>`,
@@ -23,5 +23,3 @@ const sendEmail = async (to, subject, htmlContent) => {
     console.error("Error al enviar correo:", error);
   }
 };
-
-module.exports = sendEmail;
